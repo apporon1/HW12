@@ -39,6 +39,6 @@ jobs:
     # Шаг 7: Собираем Docker-образ
     - name: Build Docker image
       run: |
-        docker build -t HW12 -f HW12/Dockerfile HW12
+        docker build -t hw12 -f HW12/Dockerfile HW12
     
    
