@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -14,32 +14,31 @@ jobs:
     - name: Check out the repository
       uses: actions/checkout@v3
 
-    # Шаг 2: Устанавливаем .NET SDK (версия 9.0)
+    # Шаг 2: Устанавливаем .NET SDK
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0'
 
-    # Шаг 3: Очистка кэша NuGet
-    - name: Clear NuGet cache
-      run: dotnet nuget locals all --clear
-
-    # Шаг 4: Восстанавливаем зависимости
+    # Шаг 3: Восстанавливаем зависимости
     - name: Restore dependencies
-      run: dotnet restore HW12/HW12.csproj
+      run: dotnet restore
 
-    # Шаг 5: Собираем проект
+    # Шаг 4: Собираем проект
     - name: Build the project
-      run: dotnet build HW12/HW12.csproj --configuration Release
+      run: dotnet build --configuration Release
 
-    # Шаг 6: Запускаем тесты
+    # Шаг 5: Запускаем unit-тесты (если они есть)
     - name: Run tests
-      run: dotnet test HW12/HW12.csproj --configuration Release
+      run: dotnet test --configuration Release
 
-    # Шаг 7: Публикуем проект
+    # Шаг 6: Публикуем проект
     - name: Publish the project
-      run: dotnet publish HW12/HW12.csproj --configuration Release --output ./out
+      run: dotnet publish --configuration Release --output ./out
 
-    # Шаг 8: Собираем Docker-образ
+    # Шаг 7: Собираем Docker-образ
     - name: Build Docker image
-      run: docker build -t hw12-image -f HW12/Dockerfile HW12
+      run: |
+        docker build -t hw12 -f HW12/Dockerfile HW12
+    
+   
