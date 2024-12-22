@@ -41,5 +41,4 @@ jobs:
       run: |
         docker build -t hw12 -f C:\Users\User\Desktop\suhanov\files\HW12\Dockerfile C:\Users\User\Desktop\suhanov\files\HW12
 
-    
    
