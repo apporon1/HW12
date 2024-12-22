@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
     - name: Check out the repository
       uses: actions/checkout@v3
 
-    # Шаг 2: Устанавливаем .NET SDK
+    # Шаг 2: Устанавливаем .NET SDK версии 9.0
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v3
       with:
@@ -22,21 +22,32 @@ jobs:
 
     # Шаг 3: Восстанавливаем зависимости
     - name: Restore dependencies
-      run: dotnet restore HW12.csproj
+      run: dotnet restore C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj
 
     # Шаг 4: Собираем проект
     - name: Build the project
-      run: dotnet build HW12.csproj --configuration Release
+      run: dotnet build C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj --configuration Release
 
     # Шаг 5: Запускаем unit-тесты (если они есть)
     - name: Run tests
-      run: dotnet test HW12.csproj --configuration Release
+      run: dotnet test C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj --configuration Release
 
     # Шаг 6: Публикуем проект
     - name: Publish the project
-      run: dotnet publish HW12.csproj --configuration Release --output ./out
+      run: dotnet publish C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj --configuration Release --output ./out
 
     # Шаг 7: Собираем Docker-образ
     - name: Build Docker image
       run: |
-        docker build -t HW12 -f Dockerfile .
+        docker build -t kkkkkkkkkkkkkkkkk78/programmodulehw12 -f C:/Users/User/Desktop/suhanov/files/HW12/HW12/Dockerfile C:/Users/User/Desktop/suhanov/files/HW12/HW12
+
+    # Шаг 8: Авторизуемся в Docker Hub
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # Шаг 9: Пушим Docker-образ
+    - name: Push Docker image
+      run: docker push kkkkkkkkkkkkkkkkk78/programmodulehw12
