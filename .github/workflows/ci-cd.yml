@@ -22,21 +22,21 @@ jobs:
 
     # Шаг 3: Восстанавливаем зависимости
     - name: Restore dependencies
-      run: dotnet restore HW12/HW12.csproj
+      run: dotnet restore HW12.csproj
 
     # Шаг 4: Собираем проект
     - name: Build the project
-      run: dotnet build HW12/HW12.csproj --configuration Release
+      run: dotnet build HW12.csproj --configuration Release
 
     # Шаг 5: Запускаем unit-тесты (если они есть)
     - name: Run tests
-      run: dotnet test HW12/HW12.csproj --configuration Release
+      run: dotnet test HW12.csproj --configuration Release
 
     # Шаг 6: Публикуем проект
     - name: Publish the project
-      run: dotnet publish HW12/HW12.csproj --configuration Release --output ./out
+      run: dotnet publish HW12.csproj --configuration Release --output ./out
 
     # Шаг 7: Собираем Docker-образ
     - name: Build Docker image
       run: |
-        docker build -t Program -f HW12/Dockerfile HW12
+        docker build -t programmodulehw12 -f Dockerfile .
