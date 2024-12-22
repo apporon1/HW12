@@ -3,51 +3,57 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    # Шаг 1: Клонируем репозиторий
-    - name: Check out the repository
+    # Проверка кода из репозитория
+    - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Шаг 2: Устанавливаем .NET SDK версии 9.0
-    - name: Set up .NET SDK
+    # Установка .NET SDK 9
+    - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0'
 
-    # Шаг 3: Восстанавливаем зависимости
-    - name: Restore dependencies
-      run: dotnet restore C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj
+    # Восстановление зависимостей
+    - name: Restore Dependencies
+      run: dotnet restore C:/Users/User/Desktop/suhanov/files/HW12/HW12
 
-    # Шаг 4: Собираем проект
-    - name: Build the project
-      run: dotnet build C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj --configuration Release
+    # Сборка проекта
+    - name: Build Project
+      run: dotnet build --no-restore C:/Users/User/Desktop/suhanov/files/HW12/HW12
 
-    # Шаг 5: Запускаем unit-тесты (если они есть)
-    - name: Run tests
-      run: dotnet test C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj --configuration Release
+    # Запуск тестов
+    - name: Run Unit Tests
+      run: dotnet test C:/Users/User/Desktop/suhanov/files/HW12/HW12
 
-    # Шаг 6: Публикуем проект
-    - name: Publish the project
-      run: dotnet publish C:/Users/User/Desktop/suhanov/files/HW12/HW12/HW12.csproj --configuration Release --output ./out
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
 
-    # Шаг 7: Собираем Docker-образ
-    - name: Build Docker image
-      run: |
-        docker build -t kkkkkkkkkkkkkkkkk78/programmodulehw12 -f C:/Users/User/Desktop/suhanov/files/HW12/HW12/Dockerfile C:/Users/User/Desktop/suhanov/files/HW12/HW12
+    steps:
+    # Проверка кода из репозитория
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-    # Шаг 8: Авторизуемся в Docker Hub
-    - name: Log in to Docker Hub
+    # Логин в Docker Hub
+    - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Шаг 9: Пушим Docker-образ
-    - name: Push Docker image
-      run: docker push kkkkkkkkkkkkkkkkk78/programmodulehw12
+    # Сборка Docker-образа
+    - name: Build Docker Image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/hw12:latest C:/Users/User/Desktop/suhanov/files/HW12/HW12
+
+    # Публикация Docker-образа
+    - name: Push Docker Image
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/hw12:latest
