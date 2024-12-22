@@ -14,39 +14,32 @@ jobs:
     - name: Check out the repository
       uses: actions/checkout@v3
 
-    # Шаг 2: Устанавливаем .NET SDK (версия 9.0)
+    # Шаг 2: Устанавливаем .NET SDK
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0'
+        dotnet-version: '7.0' # Измените на нужную версию
 
-    # Шаг 3: Восстанавливаем зависимости
+    # Шаг 3: Очистка кэша NuGet
+    - name: Clear NuGet cache
+      run: dotnet nuget locals all --clear
+
+    # Шаг 4: Восстанавливаем зависимости
     - name: Restore dependencies
       run: dotnet restore HW12.csproj
 
-    # Шаг 4: Собираем проект
+    # Шаг 5: Собираем проект
     - name: Build the project
       run: dotnet build HW12.csproj --configuration Release
 
-    # Шаг 5: Запускаем unit-тесты (если они есть)
+    # Шаг 6: Запускаем тесты
     - name: Run tests
       run: dotnet test HW12.csproj --configuration Release
 
-    # Шаг 6: Публикуем проект
+    # Шаг 7: Публикуем проект
     - name: Publish the project
       run: dotnet publish HW12.csproj --configuration Release --output ./out
 
-    # Шаг 7: Собираем Docker-образ
+    # Шаг 8: Собираем Docker-образ
     - name: Build Docker image
-      run: |
-        docker build -t hw12-image -f Dockerfile .
-    
-    # Шаг 8: (Опционально) Пушим Docker-образ в Docker Hub
-    - name: Push Docker image to Docker Hub
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: |
-        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        docker tag hw12-image $DOCKER_USERNAME/hw12-image:latest
-        docker push $DOCKER_USERNAME/hw12-image:latest
+      run: docker build -t hw12-image -f Dockerfile .
